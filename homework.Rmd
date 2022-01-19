@@ -1,0 +1,122 @@
+---
+title: "Statistical Rethinking - Homework"
+author: "Cori Lopazanski"
+date: "1/12/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1. Suppose the globe tossing data (Chapter 2) had turned out to be 4 water and 11 land. Construct the posterior distribution, using grid approximation. Use the same flat prior as in the book.
+
+```{r}
+# Define grid
+p_grid <- seq(from = 0, to = 1, length.out = 20)
+
+# Define prior
+prior <- rep(1, 20)
+
+# Compute likelihood at each value in grid
+like <- dbinom(4, size = 15, prob = p_grid)
+
+# Product of likelihood and prior
+unstd_post <- like*prior
+
+# Standardize posterior (so sums to 1)
+post <- unstd_post/sum(unstd_post)
+
+
+# Plot
+plot(p_grid,
+     post,
+     type = "b",
+     xlab = "probability of water",
+     ylab = "posterior probability")
+
+```
+
+
+2. Now suppose the data are 4 water and 2 land. Compute the posterior again, but this time use a prior that is zero below p = 0.5 and a constant above p = 0.5. This corresponds to prior information that a majority of the Earth’s surface is water.
+
+```{r}
+# Define grid
+p_grid <- seq(from = 0, to = 1, length.out = 20)
+
+# Define prior
+prior <- rep(1, 20)
+prior <- ifelse(p_grid < 0.5 , 0 , 1)
+
+# Compute likelihood at each value in grid
+like <- dbinom(4, size = 6, prob = p_grid)
+
+# Product of likelihood and prior
+unstd_post <- like*prior
+
+# Standardize posterior (so sums to 1)
+post <- unstd_post/sum(unstd_post)
+
+
+# Plot
+plot(p_grid,
+     post,
+     type = "b",
+     xlab = "probability of water",
+     ylab = "posterior probability")
+
+
+
+```
+
+
+3. For the posterior distribution from 2, compute 89% percentile and HPDI intervals. Compare the widths of these intervals. Which is wider? Why? If you had only the information in the interval, what might you misunderstand about the shape of the posterior distribution?
+
+```{r}
+
+```
+
+
+4. OPTIONAL CHALLENGE.
+
+Suppose there is bias in sampling so that Land is more likely than Water to be recorded. Specifically, assume that 1-in-5 (20%) of Water samples are accidentally recorded instead as ”Land”. First, write a generative simulation of this sampling process. Assuming the true proportion of Water is 0.70, what proportion does your simulation tend to produce instead? Second, using a simulated sample of 20 tosses, compute the unbiased posterior distribution of the true proportion of water.
+
+
+
+```{r}
+water <- 0.7
+draws <- 20
+
+true_waters <- rbinom(1, draws, prob = c(water))
+
+p_water <- true_waters / draws
+
+num_wrong <- rbinom (1, true_waters, 0.2)
+
+sampled_waters <- true_waters - num_wrong
+
+perceived_water <- sampled_waters / draws
+
+mean(p_water)
+mean(perceived_water)
+
+dbinom(sampled_waters, draws, prob = 0.7)
+
+
+
+# review pnorm vs dnorm vs rnorm
+
+
+sample <- rbinom(1, 20, 0.7)
+
+p_sample <- sample / draws
+
+posterior <- dbinom(true_waters, draws, seq(0, 1, length.out=1000))
+plot(posterior)
+```
+
+
+rnorm = random draws
+dnorm = damn thing you use to fit a model
+pnorm = calculate p values
+
