@@ -9,6 +9,8 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Week 1
+
 1. Suppose the globe tossing data (Chapter 2) had turned out to be 4 water and 11 land. Construct the posterior distribution, using grid approximation. Use the same flat prior as in the book.
 
 ```{r}
@@ -119,4 +121,32 @@ plot(posterior)
 rnorm = random draws
 dnorm = damn thing you use to fit a model
 pnorm = calculate p values
+
+## Week 2
+
+### 1. 
+```{r}
+library(rethinking)
+library(brms)
+data(Howell1)
+m1 <- brm(formula = weight ~ height,
+          data = dat,
+          family = gaussian(),
+          prior = c(prior(lognormal(0,1), "b",
+                          prior())))
+```
+
+The prediction is your prediction of the mean and your error around the mean - the posterior predictive is your prediced range of height given a new observation of height.
+
+### 2. 
+
+```{r}
+dat2 <- Howell1[Howell1$age >= 13,]
+m2 <- brm(formula = weight ~ age,
+          data = dat2)
+
+summary(m2)
+marginal_effects(m2)
+conditional_effects(m2)
+```
 

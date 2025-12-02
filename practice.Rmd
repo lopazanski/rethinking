@@ -1,0 +1,80 @@
+---
+title: "Rethinking Practice"
+author: "Cori Lopazanski"
+date: "1/20/2022"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Methods for Generating Posterior Distribution
+
+## Grid Approximation
+
+- Consider finite grid of parameter vlaues to approximate continuous distribuiton
+- Often not practical IRL with multiple parameters, but useful learning tool
+
+Steps:
+1. Define grid: make list of parameter values
+2. Compute prior at each parameter value on the grid
+3. Compute likelihood at each parameter value
+4. Compute unstandardized posterior (prior * likelihood)
+5. Standardize posterior (each value/sum(all values))
+
+```{r}
+# define grid
+p_grid <- seq(from = 0, to = 1, length.out = 5)
+
+# define prior
+prior <- rep(1, length(p_grid))
+
+# compute likelihood at each value in grid
+likelihood <- dbinom(6, size = 9, prob = p_grid)
+
+# compute product of likelihood and prior
+unstd.posterior <- likelihood * prior
+
+# standardize the posterior, so it sums to 1
+posterior <- unstd.posterior / sum(unstd.posterior)
+
+# plot the computed posterior distribution
+plot(p_grid, posterior, type="b",
+    xlab="probability of water", 
+    ylab="posterior probability")
+mtext("5 points")
+```
+
+More points increases the precision in the approximation: 
+
+```{r}
+# define grid
+p_grid <- seq(from = 0, to = 1, length.out = 20)
+
+# define prior
+prior <- rep(1, 20)
+
+# compute likelihood at each value in grid
+likelihood <- dbinom(6, size = 9, prob = p_grid)
+
+# compute product of likelihood and prior
+unstd.posterior <- likelihood * prior
+
+# standardize the posterior, so it sums to 1
+posterior <- unstd.posterior / sum(unstd.posterior)
+
+# plot the computed posterior distribution
+plot(p_grid, posterior, type="b",
+    xlab="probability of water", 
+    ylab="posterior probability")
+mtext( "20 points" )
+```
+
+
+## Quadratic Approximation
+
+
+
